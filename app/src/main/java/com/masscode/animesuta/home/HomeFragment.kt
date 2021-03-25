@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.observe
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.masscode.animesuta.R
@@ -34,7 +35,7 @@ class HomeFragment : Fragment() {
         if (activity != null) {
             val animeAdapter = AnimeAdapter { item -> showDetail(item) }
 
-            homeViewModel.anime.observe(viewLifecycleOwner, { anime ->
+            homeViewModel.anime.observe(viewLifecycleOwner) { anime ->
                 if (anime != null) {
                     when (anime) {
                         is Resource.Loading -> progress_bar.visibility = View.VISIBLE
@@ -49,7 +50,7 @@ class HomeFragment : Fragment() {
                         }
                     }
                 }
-            })
+            }
 
             with(rv_anime) {
                 layoutManager = GridLayoutManager(requireContext(), 2)

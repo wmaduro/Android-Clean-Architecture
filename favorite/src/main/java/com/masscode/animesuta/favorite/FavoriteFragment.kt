@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.observe
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.masscode.animesuta.core.domain.model.Anime
@@ -35,10 +36,10 @@ class FavoriteFragment : Fragment() {
         if (activity != null) {
             val animeAdapter = AnimeAdapter { item -> showDetail(item) }
 
-            favoriteViewModel.favoriteAnime.observe(viewLifecycleOwner, { anime ->
+            favoriteViewModel.favoriteAnime.observe(viewLifecycleOwner) { anime ->
                 animeAdapter.setData(anime)
                 view_empty.visibility = if (anime.isNotEmpty()) View.GONE else View.VISIBLE
-            })
+            }
 
             with(rv_anime) {
                 layoutManager = GridLayoutManager(requireContext(), 2)
