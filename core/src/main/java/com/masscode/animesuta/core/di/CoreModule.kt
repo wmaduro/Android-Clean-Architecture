@@ -8,6 +8,7 @@ import com.masscode.animesuta.core.data.source.remote.RemoteDataSource
 import com.masscode.animesuta.core.data.source.remote.network.ApiService
 import com.masscode.animesuta.core.domain.repository.IAnimeRepository
 import com.masscode.animesuta.core.utils.AppExecutors
+import com.masscode.animesuta.core.utils.Lixo
 import net.sqlcipher.database.SQLiteDatabase
 import net.sqlcipher.database.SupportFactory
 import okhttp3.CertificatePinner
@@ -63,6 +64,7 @@ val repositoryModule = module {
     single { LocalDataSource(get()) }
     single { RemoteDataSource(get()) }
     factory { AppExecutors() }
+    factory { Lixo() }
     single<IAnimeRepository> {
         AnimeRepository(
             get(),

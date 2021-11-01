@@ -35,6 +35,7 @@ class AnimeRepository(
                 val animeList = DataMapper.mapResponsesToEntities(data)
                 localDataSource.insertAnime(animeList)
             }
+
         }.asFlow()
 
     override fun getFavoriteAnime(): Flow<List<Anime>> {
