@@ -10,6 +10,9 @@ interface AnimeDao {
     @Query("SELECT * FROM anime")
     fun getAllAnime(): Flow<List<AnimeEntity>>
 
+    @Query("SELECT COUNT(*) FROM anime")
+    fun getCount(): Flow<Int>
+
     @Query("SELECT * FROM anime where isFavorite = 1")
     fun getFavoriteAnime(): Flow<List<AnimeEntity>>
 
@@ -18,5 +21,8 @@ interface AnimeDao {
 
     @Update
     fun updateFavoriteAnime(anime: AnimeEntity)
+
+    @Query("DELETE FROM anime")
+    suspend fun deleteAll()
 
 }

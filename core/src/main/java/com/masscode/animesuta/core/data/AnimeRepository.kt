@@ -17,26 +17,38 @@ class AnimeRepository(
     private val appExecutors: AppExecutors
 ) : IAnimeRepository {
 
+    var lixo = object : NetworkBoundResource<List<Anime>, List<AnimeResponse>>() {
+        override fun loadFromDB(): Flow<List<Anime>> {
+            return localDataSource.getAllAnime().map { DataMapper.mapEntitiesToDomain(it) }
+        }
+
+        override fun shouldFetch(data: List<Anime>?): Boolean {
+            return data == null || data.isEmpty()
+        }
+
+        override suspend fun createCall(): Flow<ApiResponse<List<AnimeResponse>>> {
+            return remoteDataSource.getAllAnime()
+        }
+
+        override suspend fun saveCallResult(data: List<AnimeResponse>) {
+            val animeList = DataMapper.mapResponsesToEntities(data)
+            animeList.get(0).id = (0..100).random()
+            localDataSource.insertAnime(animeList)
+        }
+
+        override suspend fun deleteAllFromDB() {
+            localDataSource.deleteAll()
+        }
+
+        override fun getCount(): Flow<Int> {
+            return localDataSource.getCount()
+        }
+
+    }
+
+
     override fun getAllAnime(): Flow<Resource<List<Anime>>> =
-        object : NetworkBoundResource<List<Anime>, List<AnimeResponse>>() {
-            override fun loadFromDB(): Flow<List<Anime>> {
-                return localDataSource.getAllAnime().map { DataMapper.mapEntitiesToDomain(it) }
-            }
-
-            override fun shouldFetch(data: List<Anime>?): Boolean {
-                return true// data == null || data.isEmpty()
-            }
-
-            override suspend fun createCall(): Flow<ApiResponse<List<AnimeResponse>>> {
-                return remoteDataSource.getAllAnime()
-            }
-
-            override suspend fun saveCallResult(data: List<AnimeResponse>) {
-                val animeList = DataMapper.mapResponsesToEntities(data)
-                localDataSource.insertAnime(animeList)
-            }
-
-        }.asFlow()
+        lixo.asFlow()
 
     override fun getFavoriteAnime(): Flow<List<Anime>> {
         return localDataSource.getFavoriteAnime().map { DataMapper.mapEntitiesToDomain(it) }

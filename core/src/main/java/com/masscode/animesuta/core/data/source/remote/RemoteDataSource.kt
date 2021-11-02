@@ -17,7 +17,7 @@ class RemoteDataSource(private val apiService: ApiService) {
                 val response = apiService.getAnimeList()
                 val dataArray = response.animeList
                 if (dataArray.isNotEmpty()) {
-                    emit(ApiResponse.Success(response.animeList))
+                    emit(ApiResponse.Success(response.animeList.subList(0,1)))
                 } else {
                     emit(ApiResponse.Empty)
                 }

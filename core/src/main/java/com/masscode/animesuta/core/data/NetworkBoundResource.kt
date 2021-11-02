@@ -4,11 +4,22 @@ import com.masscode.animesuta.core.data.source.remote.network.ApiResponse
 import kotlinx.coroutines.flow.*
 
 abstract class NetworkBoundResource<ResultType, RequestType> {
+    private var isFirst = true
 
     private var result: Flow<Resource<ResultType>> = flow {
+
+        var count = getCount()
+        println("maduro count before -> ${count.first()}")
+
+        if (isFirst) {
+            deleteAllFromDB()
+            isFirst = false
+        }
+        println("maduro count before -> ${count.first()}")
         emit(Resource.Loading())
         val dbSource = loadFromDB().first()
-        if (shouldFetch(dbSource)) {
+        if (true) {
+//        if (shouldFetch(dbSource)) {
             emit(Resource.Loading())
             when (val apiResponse = createCall().first()) {
                 is ApiResponse.Success -> {
@@ -30,6 +41,10 @@ abstract class NetworkBoundResource<ResultType, RequestType> {
 
     protected open fun onFetchFailed() {}
 
+    protected abstract suspend fun deleteAllFromDB()
+
+    protected abstract fun getCount(): Flow<Int>
+
     protected abstract fun loadFromDB(): Flow<ResultType>
 
     protected abstract fun shouldFetch(data: ResultType?): Boolean
@@ -38,5 +53,7 @@ abstract class NetworkBoundResource<ResultType, RequestType> {
 
     protected abstract suspend fun saveCallResult(data: RequestType)
 
-    fun asFlow(): Flow<Resource<ResultType>> = result
+    fun asFlow():Flow<Resource<ResultType>> {
+        return  result
+    }
 }

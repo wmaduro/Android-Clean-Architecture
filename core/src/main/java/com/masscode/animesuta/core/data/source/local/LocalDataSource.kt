@@ -12,8 +12,14 @@ class LocalDataSource(private val animeDao: AnimeDao) {
 
     suspend fun insertAnime(animeList: List<AnimeEntity>) = animeDao.insertAnime(animeList)
 
+    suspend fun deleteAll() = animeDao.deleteAll()
+
     fun setFavoriteAnime(anime: AnimeEntity, newState: Boolean) {
         anime.isFavorite = newState
         animeDao.updateFavoriteAnime(anime)
+    }
+
+    fun getCount(): Flow<Int> {
+        return animeDao.getCount()
     }
 }
